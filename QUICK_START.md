@@ -9,9 +9,29 @@ Before you begin, ensure you have:
 - ✓ A Google account
 - ✓ Node.js installed (`node --version`)
 
+**Windows/Dell Users**: See **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** for detailed Windows installation instructions.
+
 ## Step-by-Step Setup
 
 ### 1. Install Required Tools (5 minutes)
+
+**For Windows/Dell Computers**: See **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** for step-by-step Windows instructions.
+
+**For Mac/Linux**:
+
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Install FlutterFire CLI
+dart pub global activate flutterfire_cli
+
+# Verify installations
+firebase --version
+flutterfire --version
+```
+
+**For Windows** (Command Prompt as Administrator):
 
 ```bash
 # Install Firebase CLI

@@ -48,6 +48,7 @@ For a step-by-step guide with exact commands, see: **[QUICK_START.md](QUICK_STAR
 ### Documentation
 
 - 📖 **[QUICK_START.md](QUICK_START.md)** - Fast setup guide (recommended)
+- 💻 **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** - Windows/Dell specific instructions
 - 📖 **[FIREBASE_SETUP.md](FIREBASE_SETUP.md)** - Comprehensive documentation
 - ⚠️ **[IMPORTANT_NOTES.md](IMPORTANT_NOTES.md)** - Critical information about the setup
 
