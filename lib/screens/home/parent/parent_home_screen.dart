@@ -6,31 +6,32 @@ import 'view_therapists_screen.dart';
 import 'my_appointments_screen.dart';
 
 class ParentHomeScreen extends StatelessWidget {
-  final _authService = AuthService();
-
-  ParentHomeScreen({Key? key}) : super(key: key);
+  const ParentHomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final authService = AuthService();
     final user = AuthService.currentUser;
 
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
         backgroundColor: AppColors.primaryBlue,
-        title: Text('Parent Dashboard', style: TextStyle(color: Colors.white)),
+        title: const Text('Parent Dashboard', style: TextStyle(color: Colors.white)),
         actions: [
           IconButton(
-            icon: Icon(Icons.logout, color: Colors.white),
+            icon: const Icon(Icons.logout, color: Colors.white),
             onPressed: () async {
-              await _authService.logout();
-              Navigator.pushReplacementNamed(context, '/login');
+              await authService.logout();
+              if (context.mounted) {
+                Navigator.pushReplacementNamed(context, '/login');
+              }
             },
           ),
         ],
       ),
       body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -46,12 +47,12 @@ class ParentHomeScreen extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => AddSymptomsScreen()),
+                  MaterialPageRoute(builder: (context) => const AddSymptomsScreen()),
                 );
               },
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // View Therapists Card
             _buildActionCard(
@@ -66,13 +67,13 @@ class ParentHomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ViewTherapistsScreen(),
+                    builder: (context) => const ViewTherapistsScreen(),
                   ),
                 );
               },
             ),
 
-            SizedBox(height: 16),
+            const SizedBox(height: 16),
 
             // Appointment History Card
             _buildActionCard(
@@ -86,7 +87,7 @@ class ParentHomeScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => MyAppointmentsScreen(),
+                    builder: (context) => const MyAppointmentsScreen(),
                   ),
                 );
               },
@@ -107,7 +108,7 @@ class ParentHomeScreen extends StatelessWidget {
     required VoidCallback onTap,
   }) {
     return Container(
-      padding: EdgeInsets.all(20),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -115,7 +116,7 @@ class ParentHomeScreen extends StatelessWidget {
           BoxShadow(
             color: Colors.black.withOpacity(0.05),
             blurRadius: 10,
-            offset: Offset(0, 4),
+            offset: const Offset(0, 4),
           ),
         ],
       ),
@@ -125,14 +126,14 @@ class ParentHomeScreen extends StatelessWidget {
           Row(
             children: [
               Container(
-                padding: EdgeInsets.all(12),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: iconColor.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Icon(icon, color: iconColor, size: 28),
               ),
-              SizedBox(width: 16),
+              const SizedBox(width: 16),
               Expanded(
                 child: Text(
                   title,
@@ -145,7 +146,7 @@ class ParentHomeScreen extends StatelessWidget {
               ),
             ],
           ),
-          SizedBox(height: 12),
+          const SizedBox(height: 12),
           Text(
             description,
             style: TextStyle(
@@ -154,7 +155,7 @@ class ParentHomeScreen extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          SizedBox(height: 16),
+          const SizedBox(height: 16),
           SizedBox(
             width: double.infinity,
             child: ElevatedButton(
@@ -162,7 +163,7 @@ class ParentHomeScreen extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.primaryBlue,
                 foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(vertical: 14),
+                padding: const EdgeInsets.symmetric(vertical: 14),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
@@ -170,7 +171,7 @@ class ParentHomeScreen extends StatelessWidget {
               ),
               child: Text(
                 buttonText,
-                style: TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
             ),
           ),

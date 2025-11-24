@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'splash_screen_3.dart';
 
 class SplashScreen2 extends StatelessWidget {
+  const SplashScreen2({super.key});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF6BA3E8),
+      backgroundColor: const Color(0xFF6BA3E8),
       body: SafeArea(
         child: Column(
           children: [
@@ -21,14 +23,14 @@ class SplashScreen2 extends StatelessWidget {
                         color: Colors.white.withOpacity(0.2),
                         borderRadius: BorderRadius.circular(100),
                       ),
-                      child: Icon(
+                      child: const Icon(
                         Icons.calendar_today,
                         size: 100,
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 40),
-                    Text(
+                    const SizedBox(height: 40),
+                    const Text(
                       'Schedule Sessions',
                       style: TextStyle(
                         fontSize: 28,
@@ -36,8 +38,8 @@ class SplashScreen2 extends StatelessWidget {
                         color: Colors.white,
                       ),
                     ),
-                    SizedBox(height: 16),
-                    Padding(
+                    const SizedBox(height: 16),
+                    const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 40),
                       child: Text(
                         'Book and manage your therapy appointments with ease',
@@ -50,7 +52,7 @@ class SplashScreen2 extends StatelessWidget {
               ),
             ),
             Padding(
-              padding: EdgeInsets.all(32),
+              padding: const EdgeInsets.all(32),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -58,7 +60,7 @@ class SplashScreen2 extends StatelessWidget {
                     onPressed: () {
                       Navigator.pushReplacementNamed(context, '/login');
                     },
-                    child: Text(
+                    child: const Text(
                       'Skip',
                       style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
@@ -75,18 +77,18 @@ class SplashScreen2 extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => SplashScreen3(),
+                          builder: (context) => const SplashScreen3(),
                         ),
                       );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,
-                      foregroundColor: Color(0xFF6BA3E8),
+                      foregroundColor: const Color(0xFF6BA3E8),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
                       ),
                     ),
-                    child: Text('Next'),
+                    child: const Text('Next'),
                   ),
                 ],
               ),
@@ -99,7 +101,7 @@ class SplashScreen2 extends StatelessWidget {
 
   Widget _buildDot(bool isActive) {
     return Container(
-      margin: EdgeInsets.symmetric(horizontal: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 4),
       width: isActive ? 24 : 8,
       height: 8,
       decoration: BoxDecoration(
