@@ -21,16 +21,21 @@ If you see version numbers, Node.js is already installed. **Skip to Step 2**.
 
 ### Install Node.js
 
+**📥 For detailed Node.js installation instructions, see: [INSTALL_NODEJS.md](INSTALL_NODEJS.md)**
+
+**Quick steps:**
+
 1. Go to [https://nodejs.org/](https://nodejs.org/)
-2. Download the **LTS (Long Term Support)** version for Windows
-3. Run the installer (`.msi` file)
+2. Download the **LTS (Long Term Support)** version for Windows (click the green button)
+3. Run the installer (`.msi` file) from your Downloads folder
 4. Follow the installation wizard:
    - Click "Next"
    - Accept the license agreement
-   - Choose installation location (default is fine)
+   - Choose installation location (default is fine: `C:\Program Files\nodejs\`)
    - **Important**: Make sure "Add to PATH" is checked ✓
    - Click "Install"
-5. Restart your computer (recommended)
+   - Click "Yes" if Windows asks for permission
+5. **Restart your computer** (important for PATH to work)
 
 ### Verify Node.js Installation
 

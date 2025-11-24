@@ -3,9 +3,14 @@
 ## 🚀 Quick Commands for Your Dell Computer
 
 ### Step 1: Install Node.js First
-1. Download from: https://nodejs.org/
-2. Install the LTS version
+
+**📥 Need help installing Node.js?** → See **[INSTALL_NODEJS.md](INSTALL_NODEJS.md)** for detailed instructions
+
+**Quick version:**
+1. Download from: https://nodejs.org/ (click the LTS button)
+2. Install the `.msi` file (make sure "Add to PATH" is checked)
 3. Restart your computer
+4. Verify: `node --version`
 
 ### Step 2: Open Command Prompt as Administrator
 - Right-click Start menu → **"Command Prompt (Admin)"** or **"Windows Terminal (Admin)"**
