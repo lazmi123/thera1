@@ -112,15 +112,31 @@ All commands should show version numbers without errors.
 | **Dart** | Programming language (comes with Flutter) |
 | **FlutterFire CLI** | Firebase + Flutter integration tool |
 
-## 🔥 After Setup Complete
+## 🔥 After Running `flutterfire configure`
 
-Once all tools are installed, follow:
-1. **[QUICK_START.md](QUICK_START.md)** - Continue with Firebase configuration
-2. Enable services in Firebase Console
-3. Run your app!
+✅ If you've run `flutterfire configure` and got: **"Firebase configuration file lib\firebase_options.dart generated successfully"**
+
+🚨 **But app shows "No Firebase Connected" error?**
+
+👉 **Next Step: [ENABLE_FIREBASE_SERVICES.md](ENABLE_FIREBASE_SERVICES.md)** ⚠️ **READ THIS NOW**
+
+You need to enable services in Firebase Console:
+1. Enable Authentication
+2. Enable Firestore Database  
+3. Enable Storage
+4. Update security rules
+5. Restart app
+
+## 📋 Complete Setup Flow
+
+1. ✅ Install Node.js
+2. ✅ Install Firebase CLI & FlutterFire CLI
+3. ✅ Run `flutterfire configure`
+4. ⏳ **[ENABLE_FIREBASE_SERVICES.md](ENABLE_FIREBASE_SERVICES.md)** ← **YOU ARE HERE**
+5. ⏳ Test your app
 
 ---
 
 **Estimated Time**: 20-30 minutes (including downloads)
 
-**Got it working?** Move on to [QUICK_START.md](QUICK_START.md) for the next steps!
+**Got it working?** Great! If not, check [ENABLE_FIREBASE_SERVICES.md](ENABLE_FIREBASE_SERVICES.md)!
