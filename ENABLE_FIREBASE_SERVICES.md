@@ -87,6 +87,18 @@ You've successfully run `flutterfire configure` and generated `firebase_options.
 
 5. **Wait for storage setup** (takes a few seconds)
 
+### ⚠️ REGION ERROR?
+
+**If you see:** "Your data location has been set in a region that does not support no-cost Storage buckets"
+
+👉 **See: [FIX_STORAGE_REGION_ERROR.md](FIX_STORAGE_REGION_ERROR.md)** for solution
+
+**Quick fix:**
+1. Click "Continue" or "Create bucket" anyway
+2. It will use your Blaze plan (still free for normal usage)
+3. You won't be charged for development use
+4. Wait for bucket creation
+
 ### ✅ You should now see:
 - Storage bucket with "Upload file" button
 
