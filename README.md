@@ -49,6 +49,8 @@ For a step-by-step guide with exact commands, see: **[QUICK_START.md](QUICK_STAR
 
 - 🚀 **[DELL_WINDOWS_QUICK_REFERENCE.md](DELL_WINDOWS_QUICK_REFERENCE.md)** - Quick commands for Dell/Windows ⭐
 - 📥 **[INSTALL_NODEJS.md](INSTALL_NODEJS.md)** - Download & install Node.js
+- 🔥 **[ENABLE_FIREBASE_SERVICES.md](ENABLE_FIREBASE_SERVICES.md)** - Enable Firebase services after configuration
+- 💳 **[FIX_BILLING_ERROR.md](FIX_BILLING_ERROR.md)** - Fix "billing required" error
 - 📖 **[QUICK_START.md](QUICK_START.md)** - Fast setup guide (recommended)
 - 💻 **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** - Windows/Dell specific instructions
 - 📖 **[FIREBASE_SETUP.md](FIREBASE_SETUP.md)** - Comprehensive documentation

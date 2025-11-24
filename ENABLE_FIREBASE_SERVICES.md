@@ -52,6 +52,18 @@ You've successfully run `flutterfire configure` and generated `firebase_options.
 
 5. **Wait for database creation** (takes 30-60 seconds)
 
+### ⚠️ BILLING ERROR?
+
+**If you see:** "This API method requires billing to be enabled"
+
+👉 **See: [FIX_BILLING_ERROR.md](FIX_BILLING_ERROR.md)** for step-by-step solution
+
+**Quick fix:**
+1. Upgrade to Blaze (Pay as you go) plan
+2. Add credit/debit card (you won't be charged for development use)
+3. Wait 2-5 minutes
+4. Try creating database again
+
 ### ✅ You should now see:
 - An empty Firestore Database with "Start collection" button
 
