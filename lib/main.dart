@@ -14,23 +14,40 @@ import 'screens/home/parent/parent_home_screen.dart';
 import 'screens/home/therapist/therapist_home_screen.dart';
 import 'screens/home/admin/admin_home_screen.dart';
 
+// Global variable to track Firebase initialization status
+bool firebaseInitialized = false;
+String? firebaseError;
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // Initialize Firebase
-  // Note: Run 'flutterfire configure' to generate firebase_options.dart
-  // and platform-specific configuration files
   try {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
     );
+    firebaseInitialized = true;
     debugPrint('✓ Firebase initialized successfully');
   } catch (e) {
-    // Firebase initialization failed - app will run with mock data
-    // To enable Firebase, configure it using: flutterfire configure
+    firebaseInitialized = false;
+    firebaseError = e.toString();
     debugPrint('✗ Firebase initialization error: $e');
-    debugPrint('Running app without Firebase. Configure Firebase to enable authentication.');
-    debugPrint('Run: flutterfire configure');
+    debugPrint('');
+    debugPrint('════════════════════════════════════════════════════════════════');
+    debugPrint('⚠️  FIREBASE NOT CONNECTED');
+    debugPrint('════════════════════════════════════════════════════════════════');
+    debugPrint('');
+    debugPrint('To fix this:');
+    debugPrint('1. Go to https://console.firebase.google.com/');
+    debugPrint('2. Select your project: thera1-app');
+    debugPrint('3. Enable these services:');
+    debugPrint('   - Authentication (Email/Password)');
+    debugPrint('   - Firestore Database');
+    debugPrint('4. Wait 2-3 minutes after enabling');
+    debugPrint('5. Restart this app');
+    debugPrint('');
+    debugPrint('════════════════════════════════════════════════════════════════');
+    debugPrint('');
   }
 
   SystemChrome.setSystemUIOverlayStyle(
