@@ -75,10 +75,44 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } catch (e) {
         if (mounted) {
+          String errorMsg = e.toString();
+          if (errorMsg.contains('permission-denied') || errorMsg.contains('PERMISSION_DENIED')) {
+            errorMsg = 'Firebase Database not configured properly. Please enable Firestore Database in Firebase Console.';
+          } else if (errorMsg.contains('not-found') || errorMsg.contains('NOT_FOUND')) {
+            errorMsg = 'Firebase Database not found. Please create Firestore Database in Firebase Console.';
+          }
+          
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Error: ${e.toString()}'),
+              content: Text(errorMsg),
               backgroundColor: Colors.red,
+              duration: const Duration(seconds: 5),
+              action: SnackBarAction(
+                label: 'Help',
+                textColor: Colors.white,
+                onPressed: () {
+                  showDialog(
+                    context: context,
+                    builder: (context) => AlertDialog(
+                      title: const Text('Firebase Setup Required'),
+                      content: const Text(
+                        '1. Go to console.firebase.google.com\n'
+                        '2. Select project: thera1-app\n'
+                        '3. Enable Authentication (Email/Password)\n'
+                        '4. Create Firestore Database\n'
+                        '5. Wait 2-3 minutes\n'
+                        '6. Restart the app',
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(context),
+                          child: const Text('OK'),
+                        ),
+                      ],
+                    ),
+                  );
+                },
+              ),
             ),
           );
         }

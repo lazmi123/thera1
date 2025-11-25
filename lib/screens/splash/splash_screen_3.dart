@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import '../../main.dart';
+import '../firebase_check_screen.dart';
 
 class SplashScreen3 extends StatelessWidget {
   const SplashScreen3({super.key});
@@ -61,7 +63,16 @@ class SplashScreen3 extends StatelessWidget {
                   ),
                   ElevatedButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
+                      if (firebaseInitialized) {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FirebaseCheckScreen(),
+                          ),
+                        );
+                      }
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.white,

@@ -47,14 +47,25 @@ For a step-by-step guide with exact commands, see: **[QUICK_START.md](QUICK_STAR
 
 ### Documentation
 
-- 🚀 **[DELL_WINDOWS_QUICK_REFERENCE.md](DELL_WINDOWS_QUICK_REFERENCE.md)** - Quick commands for Dell/Windows ⭐
+#### 🎯 Quick Start (NEW - Start Here!)
+- 🚀 **[RUN_APP_NOW.md](RUN_APP_NOW.md)** - **RUN YOUR APP NOW!** ⭐⭐⭐
+- 📝 **[CHANGES_MADE.md](CHANGES_MADE.md)** - What code changes were made
+
+#### Setup Guides
+- 🚀 **[DELL_WINDOWS_QUICK_REFERENCE.md](DELL_WINDOWS_QUICK_REFERENCE.md)** - Quick commands for Dell/Windows
 - 📥 **[INSTALL_NODEJS.md](INSTALL_NODEJS.md)** - Download & install Node.js
-- 🔥 **[ENABLE_FIREBASE_SERVICES.md](ENABLE_FIREBASE_SERVICES.md)** - Enable Firebase services after configuration
+- 🔥 **[ENABLE_FIREBASE_SERVICES.md](ENABLE_FIREBASE_SERVICES.md)** - Enable Firebase services
 - 💳 **[FIX_BILLING_ERROR.md](FIX_BILLING_ERROR.md)** - Fix "billing required" error
-- 📖 **[QUICK_START.md](QUICK_START.md)** - Fast setup guide (recommended)
-- 💻 **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** - Windows/Dell specific instructions
+- 🔴 **[FIX_RED_SCREEN.md](FIX_RED_SCREEN.md)** - Fix red error screen
+- 📖 **[QUICK_START.md](QUICK_START.md)** - Complete setup guide
+- 💻 **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** - Windows/Dell instructions
 - 📖 **[FIREBASE_SETUP.md](FIREBASE_SETUP.md)** - Comprehensive documentation
-- ⚠️ **[IMPORTANT_NOTES.md](IMPORTANT_NOTES.md)** - Critical information about the setup
+- ⚠️ **[IMPORTANT_NOTES.md](IMPORTANT_NOTES.md)** - Critical information
+
+#### Troubleshooting
+- 🔧 **[TROUBLESHOOT_CONNECTION.md](TROUBLESHOOT_CONNECTION.md)** - Fix connection issues
+- 📦 **[FIX_PACKAGE_ERROR.md](FIX_PACKAGE_ERROR.md)** - Fix package errors
+- 🌍 **[FIX_STORAGE_REGION_ERROR.md](FIX_STORAGE_REGION_ERROR.md)** - Fix Storage region errors
 
 ### Security Rules
 
