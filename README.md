@@ -23,76 +23,57 @@ A Flutter application for managing therapy sessions, connecting parents with the
 
 ## Firebase Setup
 
-### Prerequisites
-1. Install Flutter SDK
-2. Install FlutterFire CLI:
-   ```bash
-   dart pub global activate flutterfire_cli
-   ```
+⚠️ **IMPORTANT**: Firebase must be configured before you can run this app.
 
-### Configuration Steps
+### Quick Start (30-40 minutes)
 
-1. **Create a Firebase Project**:
-   - Go to [Firebase Console](https://console.firebase.google.com/)
-   - Create a new project or select an existing one
+For a step-by-step guide with exact commands, see: **[QUICK_START.md](QUICK_START.md)** 🚀
 
-2. **Configure FlutterFire**:
-   ```bash
-   flutterfire configure
-   ```
-   This command will:
-   - Create a `firebase_options.dart` file
-   - Configure Firebase for iOS, Android, and Web platforms
+### What You'll Need
 
-3. **Enable Authentication**:
-   - In Firebase Console, go to Authentication
-   - Enable Email/Password sign-in method
+1. Flutter SDK installed
+2. A Google account for Firebase
+3. Node.js (for Firebase CLI)
 
-4. **Create Firestore Database**:
-   - In Firebase Console, go to Firestore Database
-   - Create a database (start in test mode for development)
-   - Set up security rules (see below)
+### Setup Overview
 
-5. **Set up Firebase Storage** (optional):
-   - In Firebase Console, go to Storage
-   - Enable Storage for profile pictures
+1. Install Firebase CLI and FlutterFire CLI
+2. Create a Firebase project
+3. Run `flutterfire configure`
+4. Enable Authentication, Firestore, and Storage
+5. Deploy security rules
+6. Run `flutter pub get`
+7. Run your app!
 
-### Firestore Security Rules
+### Documentation
 
-```javascript
-rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    // Users collection
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
-    }
-    
-    // Appointments collection
-    match /appointments/{appointmentId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null && 
-        (request.auth.uid == resource.data.parentId || 
-         request.auth.uid == resource.data.therapistId ||
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
-      allow delete: if request.auth != null &&
-        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
-    }
-    
-    // Symptoms collection
-    match /symptoms/{symptomId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update, delete: if request.auth != null && 
-        (request.auth.uid == resource.data.parentId ||
-         get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin');
-    }
-  }
-}
-```
+#### 🎯 Quick Start (NEW - Start Here!)
+- 🚀 **[RUN_APP_NOW.md](RUN_APP_NOW.md)** - **RUN YOUR APP NOW!** ⭐⭐⭐
+- 📝 **[CHANGES_MADE.md](CHANGES_MADE.md)** - What code changes were made
+
+#### Setup Guides
+- 🚀 **[DELL_WINDOWS_QUICK_REFERENCE.md](DELL_WINDOWS_QUICK_REFERENCE.md)** - Quick commands for Dell/Windows
+- 📥 **[INSTALL_NODEJS.md](INSTALL_NODEJS.md)** - Download & install Node.js
+- 🔥 **[ENABLE_FIREBASE_SERVICES.md](ENABLE_FIREBASE_SERVICES.md)** - Enable Firebase services
+- 💳 **[FIX_BILLING_ERROR.md](FIX_BILLING_ERROR.md)** - Fix "billing required" error
+- 🔴 **[FIX_RED_SCREEN.md](FIX_RED_SCREEN.md)** - Fix red error screen
+- 📖 **[QUICK_START.md](QUICK_START.md)** - Complete setup guide
+- 💻 **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** - Windows/Dell instructions
+- 📖 **[FIREBASE_SETUP.md](FIREBASE_SETUP.md)** - Comprehensive documentation
+- ⚠️ **[IMPORTANT_NOTES.md](IMPORTANT_NOTES.md)** - Critical information
+
+#### Troubleshooting
+- 🔧 **[TROUBLESHOOT_CONNECTION.md](TROUBLESHOOT_CONNECTION.md)** - Fix connection issues
+- 📦 **[FIX_PACKAGE_ERROR.md](FIX_PACKAGE_ERROR.md)** - Fix package errors
+- 🌍 **[FIX_STORAGE_REGION_ERROR.md](FIX_STORAGE_REGION_ERROR.md)** - Fix Storage region errors
+
+### Security Rules
+
+Security rules for Firestore and Storage are provided in:
+- `firestore.rules` - Firestore database security rules
+- `storage.rules` - Firebase Storage security rules
+
+These files are ready to be deployed to your Firebase project.
 
 ## Installation
 
@@ -137,24 +118,53 @@ lib/
 
 ## User Roles
 
+The app supports three user roles with different permissions:
+
 ### Parent
-- Email: any email (without 'therapist' or 'admin')
-- Can add child symptoms, view therapists, and manage appointments
+- Can add child symptoms and track development
+- View available therapists with specializations
+- Book and manage appointments
+- View appointment history
 
 ### Therapist
-- Email: contains 'therapist'
-- Can manage profile, view appointments, and manage clients
+- Manage professional profile and specializations
+- View and respond to appointment requests
+- Manage client appointments
+- Access patient information
 
 ### Admin
-- Email: contains 'admin'
-- Full system access for user and appointment management
+- Full system access
+- Manage all users (parents and therapists)
+- Oversee all appointments
+- System configuration and analytics
+
+**Note**: To create an admin user, first create a regular account, then manually change the `role` field to `admin` in Firestore Database.
 
 ## Development Notes
 
 - **Theme**: The app uses a consistent blue color scheme (`#4A90E2` primary)
-- **Firebase Ready**: All services are structured to work with Firebase
-- **Mock Data**: Screens include mock data for development/testing
-- **TODO Comments**: Look for `// TODO:` comments to find Firebase integration points
+- **Firebase Integration**: Complete authentication and database services implemented
+- **Authentication**: Email/password authentication with role-based access control
+- **Database**: Firestore for user data, appointments, and symptom tracking
+- **Storage**: Firebase Storage for profile images and documents
+- **State Management**: Uses StatefulWidget and setState (can be upgraded to Provider/Riverpod)
+
+## Tech Stack
+
+- **Framework**: Flutter 3.9+
+- **Backend**: Firebase
+  - Authentication (Email/Password)
+  - Cloud Firestore (NoSQL Database)
+  - Cloud Storage (File Storage)
+- **Language**: Dart 3.9+
+- **State Management**: StatefulWidget (basic)
+- **Dependencies**:
+  - `firebase_core` - Firebase initialization
+  - `firebase_auth` - Authentication
+  - `cloud_firestore` - Database
+  - `firebase_storage` - File storage
+  - `shared_preferences` - Local storage
+  - `image_picker` - Image selection
 
 ## Building for Production
 

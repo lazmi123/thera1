@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'splash_screen_2.dart';
+import '../../main.dart';
+import '../firebase_check_screen.dart';
 
 class SplashScreen1 extends StatelessWidget {
   const SplashScreen1({super.key});
@@ -58,7 +60,16 @@ class SplashScreen1 extends StatelessWidget {
                 children: [
                   TextButton(
                     onPressed: () {
-                      Navigator.pushReplacementNamed(context, '/login');
+                      if (firebaseInitialized) {
+                        Navigator.pushReplacementNamed(context, '/login');
+                      } else {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const FirebaseCheckScreen(),
+                          ),
+                        );
+                      }
                     },
                     child: const Text(
                       'Skip',

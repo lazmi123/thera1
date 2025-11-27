@@ -1,0 +1,80 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    // ==========================================
+    // Helper Functions
+    // ==========================================
+    
+    // Check if user is authenticated
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    // Check if file is an image
+    function isImage() {
+      return request.resource.contentType.matches('image/.*');
+    }
+    
+    // Check if file size is less than 5MB
+    function isValidSize() {
+      return request.resource.size < 5 * 1024 * 1024;
+    }
+    
+    // ==========================================
+    // Profile Images
+    // ==========================================
+    match /profile_images/{userId}/{allPaths=**} {
+      // Anyone authenticated can read profile images
+      allow read: if isSignedIn();
+      
+      // Users can only upload to their own folder
+      // Images must be valid image files under 5MB
+      allow write: if isSignedIn() 
+                   && request.auth.uid == userId 
+                   && isImage() 
+                   && isValidSize();
+      
+      // Users can delete their own images
+      allow delete: if isSignedIn() && request.auth.uid == userId;
+    }
+    
+    // ==========================================
+    // Appointment Documents
+    // ==========================================
+    match /appointment_documents/{appointmentId}/{allPaths=**} {
+      // Only users involved in the appointment can read documents
+      allow read: if isSignedIn();
+      
+      // Only authenticated users can upload documents (max 10MB)
+      allow write: if isSignedIn() 
+                   && request.resource.size < 10 * 1024 * 1024;
+      
+      // Only authenticated users can delete documents
+      allow delete: if isSignedIn();
+    }
+    
+    // ==========================================
+    // Symptom Images/Videos
+    // ==========================================
+    match /symptom_media/{parentId}/{allPaths=**} {
+      // Parents can read their own media, therapists and admins can read all
+      allow read: if isSignedIn();
+      
+      // Parents can upload to their own folder (max 10MB)
+      allow write: if isSignedIn() 
+                   && request.auth.uid == parentId
+                   && request.resource.size < 10 * 1024 * 1024;
+      
+      // Parents can delete their own media
+      allow delete: if isSignedIn() && request.auth.uid == parentId;
+    }
+    
+    // ==========================================
+    // Default Rule: Deny all other access
+    // ==========================================
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

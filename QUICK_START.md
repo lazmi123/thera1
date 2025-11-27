@@ -1,0 +1,237 @@
+# Quick Start - Firebase Setup
+
+Follow these steps to get your Thera1 app connected to Firebase.
+
+## Prerequisites Check
+
+Before you begin, ensure you have:
+- ✓ Flutter SDK installed (`flutter --version`)
+- ✓ A Google account
+- ✓ Node.js installed (`node --version`)
+
+**Windows/Dell Users**: See **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** for detailed Windows installation instructions.
+
+## Step-by-Step Setup
+
+### 1. Install Required Tools (5 minutes)
+
+**For Windows/Dell Computers**: See **[WINDOWS_SETUP.md](WINDOWS_SETUP.md)** for step-by-step Windows instructions.
+
+**For Mac/Linux**:
+
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Install FlutterFire CLI
+dart pub global activate flutterfire_cli
+
+# Verify installations
+firebase --version
+flutterfire --version
+```
+
+**For Windows** (Command Prompt as Administrator):
+
+```bash
+# Install Firebase CLI
+npm install -g firebase-tools
+
+# Install FlutterFire CLI
+dart pub global activate flutterfire_cli
+
+# Verify installations
+firebase --version
+flutterfire --version
+```
+
+### 2. Login to Firebase (2 minutes)
+
+```bash
+firebase login
+```
+
+This will open your browser. Sign in with your Google account.
+
+### 3. Create Firebase Project (3 minutes)
+
+Go to [Firebase Console](https://console.firebase.google.com/) and:
+1. Click "Add project"
+2. Enter project name: `thera1-app`
+3. (Optional) Enable Google Analytics
+4. Click "Create project"
+
+### 4. Configure Firebase in Your App (5 minutes)
+
+In your project directory, run:
+
+```bash
+flutterfire configure
+```
+
+This will:
+- Show a list of your Firebase projects
+- Let you select `thera1-app`
+- Ask which platforms to configure (select all you need)
+- Generate `lib/firebase_options.dart`
+- Create platform-specific config files
+
+**Expected output:**
+```
+✔ Firebase project selected: thera1-app
+✔ Registered new Firebase Android app
+✔ Registered new Firebase iOS app
+✔ Firebase configuration file lib/firebase_options.dart generated successfully
+```
+
+### 5. Enable Firebase Services (10 minutes)
+
+#### A. Enable Authentication
+1. Go to [Firebase Console](https://console.firebase.com) → Your Project
+2. Click **Authentication** → **Get Started**
+3. Click **Email/Password** → Toggle **Enable** → **Save**
+
+#### B. Enable Firestore Database
+1. Click **Firestore Database** → **Create database**
+2. Select **Start in test mode** (for now)
+3. Choose your region (closest to users)
+4. Click **Enable**
+
+#### C. Enable Storage
+1. Click **Storage** → **Get started**
+2. Select **Start in test mode** (for now)
+3. Click **Done**
+
+### 6. Configure Security Rules (5 minutes)
+
+#### Firestore Rules
+1. Go to **Firestore Database** → **Rules**
+2. Copy contents from `firestore.rules` file in your project
+3. Click **Publish**
+
+#### Storage Rules
+1. Go to **Storage** → **Rules**
+2. Copy contents from `storage.rules` file in your project
+3. Click **Publish**
+
+### 7. Install Dependencies (2 minutes)
+
+```bash
+flutter pub get
+```
+
+### 8. Run Your App (2 minutes)
+
+```bash
+# For Android
+flutter run -d android
+
+# For iOS
+cd ios && pod install && cd ..
+flutter run -d ios
+
+# For Web
+flutter run -d chrome
+```
+
+## Verify Setup
+
+When the app starts, check the console output:
+- ✓ Should see: `✓ Firebase initialized successfully`
+- ✗ If you see error: Follow troubleshooting below
+
+## Testing Authentication
+
+1. Open the app
+2. Navigate through splash screens
+3. Click "Sign Up" on login screen
+4. Create a test account:
+   - Name: Test User
+   - Email: test@example.com
+   - Password: test123456
+   - Role: Select "Parent"
+5. If successful, you should be redirected to Parent Home Screen
+
+## Create Admin User (Optional)
+
+To test admin features:
+
+1. Create a user through the app
+2. Go to [Firebase Console](https://console.firebase.com) → Firestore Database
+3. Click on `users` collection
+4. Find your user document (by UID)
+5. Click the document
+6. Find `role` field → Click edit icon
+7. Change value from `parent` to `admin`
+8. Click **Update**
+9. Log out and log back in
+
+## Troubleshooting
+
+### Error: "Default FirebaseApp is not initialized"
+**Solution:** Run `flutterfire configure` again
+
+### Error: "Google Services plugin cannot be applied"
+**Solution:** Make sure `google-services.json` exists in `android/app/`
+
+### Android Build Error
+```bash
+# Clean and rebuild
+flutter clean
+flutter pub get
+cd android && ./gradlew clean && cd ..
+flutter run
+```
+
+### iOS Build Error
+```bash
+# Reinstall pods
+cd ios
+rm -rf Pods Podfile.lock
+pod install
+cd ..
+flutter run
+```
+
+### Web CORS Error
+This is expected in development. For production, configure your Firebase project properly.
+
+## Next Steps
+
+✓ Setup Complete! You can now:
+- Test user authentication
+- Create different user types (Parent, Therapist, Admin)
+- Start building features
+- Test on different platforms
+
+## File Structure After Setup
+
+```
+/workspace/
+├── lib/
+│   ├── firebase_options.dart         ← Generated by flutterfire
+│   ├── main.dart                      ← Updated to use Firebase
+│   └── ...
+├── android/
+│   ├── app/
+│   │   └── google-services.json       ← Generated by flutterfire
+│   └── ...
+├── ios/
+│   └── Runner/
+│       └── GoogleService-Info.plist   ← Generated by flutterfire
+├── firestore.rules                     ← Security rules for Firestore
+├── storage.rules                       ← Security rules for Storage
+└── FIREBASE_SETUP.md                   ← Detailed documentation
+```
+
+## Need Help?
+
+- 📖 [Full Setup Guide](FIREBASE_SETUP.md) - Comprehensive documentation
+- 🔥 [Firebase Docs](https://firebase.google.com/docs)
+- 💙 [FlutterFire Docs](https://firebase.flutter.dev/)
+
+---
+
+**Estimated Total Time:** 30-40 minutes
+
+Good luck! 🚀
