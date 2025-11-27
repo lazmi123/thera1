@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../utils/colors.dart';
 
 class MyAppointmentsScreen extends StatefulWidget {
@@ -9,46 +11,27 @@ class MyAppointmentsScreen extends StatefulWidget {
 }
 
 class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
-  // Mock data - replace with Firebase query
-  // TODO: Fetch from Firestore:
-  // collection('appointments').where('parentId', isEqualTo: currentUserId).orderBy('date')
-  final List<Map<String, dynamic>> _appointments = [
-    {
-      'id': '1',
-      'title': 'Initial Consultation',
-      'therapist': 'Dr. Sarah Johnson',
-      'date': '2024-01-15',
-      'time': '10:00 AM',
-      'status': 'CONFIRMED',
-    },
-    {
-      'id': '2',
-      'title': 'Follow-up Session',
-      'therapist': 'Dr. Michael Chen',
-      'date': '2024-01-18',
-      'time': '02:00 PM',
-      'status': 'PENDING',
-    },
-    {
-      'id': '3',
-      'title': 'Family Counseling',
-      'therapist': 'Dr. Emily Rodriguez',
-      'date': '2024-01-12',
-      'time': '11:00 AM',
-      'status': 'COMPLETED',
-    },
-    {
-      'id': '4',
-      'title': 'Assessment',
-      'therapist': 'Dr. James Wilson',
-      'date': '2024-01-10',
-      'time': '03:00 PM',
-      'status': 'CANCELLED',
-    },
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   @override
   Widget build(BuildContext context) {
+    final currentUser = _auth.currentUser;
+
+    if (currentUser == null) {
+      return Scaffold(
+        backgroundColor: AppColors.backgroundColor,
+        appBar: AppBar(
+          backgroundColor: AppColors.primaryBlue,
+          title: Text('My Appointments', style: TextStyle(color: Colors.white)),
+          centerTitle: true,
+        ),
+        body: Center(
+          child: Text('Please login to view appointments'),
+        ),
+      );
+    }
+
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       appBar: AppBar(
@@ -60,12 +43,73 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
         title: Text('My Appointments', style: TextStyle(color: Colors.white)),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: _appointments.length,
-        itemBuilder: (context, index) {
-          final appointment = _appointments[index];
-          return _buildAppointmentCard(appointment);
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore
+            .collection('appointments')
+            .where('parentId', isEqualTo: currentUser.uid)
+            .orderBy('createdAt', descending: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 60, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text('Error loading appointments'),
+                  SizedBox(height: 8),
+                  Text(
+                    snapshot.error.toString(),
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: CircularProgressIndicator(color: AppColors.primaryBlue),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.calendar_today_outlined,
+                      size: 80, color: Colors.grey[400]),
+                  SizedBox(height: 16),
+                  Text(
+                    'No appointments yet',
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Book an appointment to get started',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final appointments = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: EdgeInsets.all(16),
+            itemCount: appointments.length,
+            itemBuilder: (context, index) {
+              final appointmentDoc = appointments[index];
+              final appointment =
+                  appointmentDoc.data() as Map<String, dynamic>;
+              appointment['id'] = appointmentDoc.id;
+              return _buildAppointmentCard(appointment, appointmentDoc.id);
+            },
+          );
         },
       ),
     );
@@ -116,26 +160,26 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Status Badge
-          Row(
-            children: [
-              Icon(statusIcon, color: statusColor, size: 20),
-              SizedBox(width: 8),
-              Text(
-                status,
-                style: TextStyle(
-                  fontSize: 13,
-                  fontWeight: FontWeight.bold,
-                  color: statusColor,
-                ),
+              Row(
+                children: [
+                  Icon(statusIcon, color: statusColor, size: 20),
+                  SizedBox(width: 8),
+                  Text(
+                    statusDisplay,
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.bold,
+                      color: statusColor,
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
 
           SizedBox(height: 12),
 
-          // Title
+          // Title/Specialization
           Text(
-            appointment['title'],
+            appointment['specialization'] ?? 'Appointment',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
@@ -151,7 +195,7 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
               Icon(Icons.person_outline, size: 18, color: AppColors.textLight),
               SizedBox(width: 8),
               Text(
-                appointment['therapist'],
+                appointment['therapistName'] ?? 'Therapist',
                 style: TextStyle(fontSize: 14, color: AppColors.textDark),
               ),
             ],
@@ -159,7 +203,7 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
 
           SizedBox(height: 8),
 
-          // Date
+          // Created date
           Row(
             children: [
               Icon(
@@ -169,32 +213,16 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
               ),
               SizedBox(width: 8),
               Text(
-                appointment['date'],
-                style: TextStyle(fontSize: 14, color: AppColors.textDark),
-              ),
-            ],
-          ),
-
-          SizedBox(height: 8),
-
-          // Time
-          Row(
-            children: [
-              Icon(
-                Icons.access_time_outlined,
-                size: 18,
-                color: AppColors.textLight,
-              ),
-              SizedBox(width: 8),
-              Text(
-                appointment['time'],
+                appointment['createdAt'] != null
+                    ? _formatDate(appointment['createdAt'])
+                    : 'Date pending',
                 style: TextStyle(fontSize: 14, color: AppColors.textDark),
               ),
             ],
           ),
 
           // Action Buttons (only for CONFIRMED status)
-          if (status == 'CONFIRMED') ...[
+          if (status == 'confirmed') ...[
             SizedBox(height: 16),
             Row(
               children: [
@@ -242,6 +270,25 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
         ],
       ),
     );
+  }
+
+  String _formatDate(dynamic timestamp) {
+    if (timestamp == null) return 'Date pending';
+    
+    try {
+      DateTime date;
+      if (timestamp is Timestamp) {
+        date = timestamp.toDate();
+      } else if (timestamp is DateTime) {
+        date = timestamp;
+      } else {
+        return 'Date pending';
+      }
+      
+      return '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    } catch (e) {
+      return 'Date pending';
+    }
   }
 
   void _showRescheduleDialog(Map<String, dynamic> appointment) {
@@ -301,7 +348,7 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
           ],
         ),
         content: Text(
-          'Are you sure you want to cancel "${appointment['title']}"?',
+          'Are you sure you want to cancel this appointment?',
         ),
         actions: [
           TextButton(
@@ -309,26 +356,37 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
             child: Text('No'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              setState(() {
-                _appointments.firstWhere(
-                  (a) => a['id'] == appointment['id'],
-                )['status'] = 'CANCELLED';
-              });
-              // TODO: Update in Firebase
-              /*
-              await FirebaseFirestore.instance
-                  .collection('appointments')
-                  .doc(appointment['id'])
-                  .update({'status': 'CANCELLED'});
-              */
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text('Appointment cancelled'),
-                  backgroundColor: Colors.red,
-                ),
-              );
+              
+              try {
+                // Update in Firebase
+                await _firestore
+                    .collection('appointments')
+                    .doc(appointment['id'])
+                    .update({
+                  'status': 'cancelled',
+                  'updatedAt': FieldValue.serverTimestamp(),
+                });
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Appointment cancelled'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error cancelling appointment: $e'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             child: Text('Yes, Cancel'),

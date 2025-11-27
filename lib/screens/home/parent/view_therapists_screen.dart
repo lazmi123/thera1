@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import '../../../utils/colors.dart';
 
 class ViewTherapistsScreen extends StatefulWidget {
@@ -9,50 +11,9 @@ class ViewTherapistsScreen extends StatefulWidget {
 }
 
 class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
-  // Mock data - replace with Firebase query
-  // TODO: Fetch from Firestore: collection('therapists').where('isActive', isEqualTo: true)
-  final List<Map<String, dynamic>> _therapists = [
-    {
-      'id': '1',
-      'name': 'Dr. Sarah Johnson',
-      'specialization': 'Child Psychology',
-      'rating': 4.8,
-      'experience': 12,
-      'availability': 'Mon, Wed, Fri',
-      'location': 'New York, NY',
-      'initial': 'D',
-    },
-    {
-      'id': '2',
-      'name': 'Dr. Michael Chen',
-      'specialization': 'Behavioral Therapy',
-      'rating': 4.9,
-      'experience': 15,
-      'availability': 'Tue, Thu, Sat',
-      'location': 'Los Angeles, CA',
-      'initial': 'D',
-    },
-    {
-      'id': '3',
-      'name': 'Dr. Emily Rodriguez',
-      'specialization': 'Family Counseling',
-      'rating': 4.7,
-      'experience': 10,
-      'availability': 'Mon, Tue, Thu',
-      'location': 'Chicago, IL',
-      'initial': 'D',
-    },
-    {
-      'id': '4',
-      'name': 'Dr. James Wilson',
-      'specialization': 'Autism Spectrum',
-      'rating': 4.9,
-      'experience': 18,
-      'availability': 'Wed, Fri, Sat',
-      'location': 'Houston, TX',
-      'initial': 'D',
-    },
-  ];
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = true;
 
   @override
   Widget build(BuildContext context) {
@@ -70,18 +31,87 @@ class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
         ),
         centerTitle: true,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16),
-        itemCount: _therapists.length,
-        itemBuilder: (context, index) {
-          final therapist = _therapists[index];
-          return _buildTherapistCard(therapist);
+      body: StreamBuilder<QuerySnapshot>(
+        stream: _firestore
+            .collection('users')
+            .where('role', isEqualTo: 'therapist')
+            .where('isActive', isEqualTo: true)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 60, color: Colors.red),
+                  SizedBox(height: 16),
+                  Text('Error loading therapists'),
+                  SizedBox(height: 8),
+                  Text(
+                    snapshot.error.toString(),
+                    style: TextStyle(fontSize: 12, color: Colors.grey),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            );
+          }
+
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(color: AppColors.primaryBlue),
+                  SizedBox(height: 16),
+                  Text('Loading therapists...'),
+                ],
+              ),
+            );
+          }
+
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.people_outline, size: 80, color: Colors.grey[400]),
+                  SizedBox(height: 16),
+                  Text(
+                    'No therapists available',
+                    style: TextStyle(fontSize: 18, color: Colors.grey[600]),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    'Check back later',
+                    style: TextStyle(fontSize: 14, color: Colors.grey),
+                  ),
+                ],
+              ),
+            );
+          }
+
+          final therapists = snapshot.data!.docs;
+
+          return ListView.builder(
+            padding: EdgeInsets.all(16),
+            itemCount: therapists.length,
+            itemBuilder: (context, index) {
+              final therapistDoc = therapists[index];
+              final therapist = therapistDoc.data() as Map<String, dynamic>;
+              therapist['id'] = therapistDoc.id;
+              return _buildTherapistCard(therapist);
+            },
+          );
         },
       ),
     );
   }
 
   Widget _buildTherapistCard(Map<String, dynamic> therapist) {
+    final name = therapist['name'] ?? 'Unknown';
+    final initial = name.isNotEmpty ? name[0].toUpperCase() : 'T';
+    
     return Container(
       margin: EdgeInsets.only(bottom: 16),
       padding: EdgeInsets.all(16),
@@ -106,7 +136,7 @@ class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
                 radius: 30,
                 backgroundColor: AppColors.primaryBlue,
                 child: Text(
-                  therapist['initial'],
+                  initial,
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -122,7 +152,7 @@ class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      therapist['name'],
+                      name,
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -131,7 +161,7 @@ class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
                     ),
                     SizedBox(height: 4),
                     Text(
-                      therapist['specialization'],
+                      therapist['specialization'] ?? 'General Therapy',
                       style: TextStyle(
                         fontSize: 14,
                         color: AppColors.textLight,
@@ -143,21 +173,23 @@ class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
                         Icon(Icons.star, color: Colors.amber, size: 18),
                         SizedBox(width: 4),
                         Text(
-                          '${therapist['rating']}',
+                          '${therapist['rating'] ?? 0.0}',
                           style: TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w600,
                             color: AppColors.textDark,
                           ),
                         ),
-                        SizedBox(width: 8),
-                        Text(
-                          '• ${therapist['experience']} years',
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: AppColors.textLight,
+                        if (therapist['yearsOfExperience'] != null) ...[
+                          SizedBox(width: 8),
+                          Text(
+                            '• ${therapist['yearsOfExperience']} years',
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: AppColors.textLight,
+                            ),
                           ),
-                        ),
+                        ],
                       ],
                     ),
                   ],
@@ -169,38 +201,43 @@ class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
           SizedBox(height: 16),
 
           // Availability
-          Row(
-            children: [
-              Icon(
-                Icons.calendar_today_outlined,
-                size: 18,
-                color: AppColors.textLight,
-              ),
-              SizedBox(width: 8),
-              Text(
-                therapist['availability'],
-                style: TextStyle(fontSize: 14, color: AppColors.textDark),
-              ),
-            ],
-          ),
+          if (therapist['availability'] != null &&
+              (therapist['availability'] as List).isNotEmpty)
+            Row(
+              children: [
+                Icon(
+                  Icons.calendar_today_outlined,
+                  size: 18,
+                  color: AppColors.textLight,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    (therapist['availability'] as List).join(', '),
+                    style: TextStyle(fontSize: 14, color: AppColors.textDark),
+                  ),
+                ),
+              ],
+            ),
 
-          SizedBox(height: 8),
+          if (therapist['availability'] != null) SizedBox(height: 8),
 
           // Location
-          Row(
-            children: [
-              Icon(
-                Icons.location_on_outlined,
-                size: 18,
-                color: AppColors.textLight,
-              ),
-              SizedBox(width: 8),
-              Text(
-                therapist['location'],
-                style: TextStyle(fontSize: 14, color: AppColors.textDark),
-              ),
-            ],
-          ),
+          if (therapist['location'] != null)
+            Row(
+              children: [
+                Icon(
+                  Icons.location_on_outlined,
+                  size: 18,
+                  color: AppColors.textLight,
+                ),
+                SizedBox(width: 8),
+                Text(
+                  therapist['location'],
+                  style: TextStyle(fontSize: 14, color: AppColors.textDark),
+                ),
+              ],
+            ),
 
           SizedBox(height: 16),
 
@@ -260,27 +297,54 @@ class _ViewTherapistsScreenState extends State<ViewTherapistsScreen> {
             child: Text('Cancel'),
           ),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               Navigator.pop(context);
-              // TODO: Save appointment to Firebase
-              /*
-              await FirebaseFirestore.instance.collection('appointments').add({
-                'parentId': FirebaseAuth.instance.currentUser?.uid,
-                'therapistId': therapist['id'],
-                'therapistName': therapist['name'],
-                'specialization': therapist['specialization'],
-                'status': 'pending',
-                'timestamp': FieldValue.serverTimestamp(),
-              });
-              */
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    'Booking request sent to ${therapist['name']}!',
-                  ),
-                  backgroundColor: Colors.green,
-                ),
-              );
+              
+              try {
+                final currentUser = _auth.currentUser;
+                if (currentUser == null) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Please login to book appointments'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                  return;
+                }
+
+                // Save appointment to Firebase
+                await _firestore.collection('appointments').add({
+                  'parentId': currentUser.uid,
+                  'therapistId': therapist['id'],
+                  'therapistName': therapist['name'] ?? 'Unknown',
+                  'specialization': therapist['specialization'] ?? 'General',
+                  'status': 'pending',
+                  'createdAt': FieldValue.serverTimestamp(),
+                  'updatedAt': FieldValue.serverTimestamp(),
+                });
+
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text(
+                        'Booking request sent to ${therapist['name']}!',
+                      ),
+                      backgroundColor: Colors.green,
+                      duration: Duration(seconds: 3),
+                    ),
+                  );
+                }
+              } catch (e) {
+                if (mounted) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text('Error booking appointment: ${e.toString()}'),
+                      backgroundColor: Colors.red,
+                      duration: Duration(seconds: 5),
+                    ),
+                  );
+                }
+              }
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: AppColors.primaryBlue,
