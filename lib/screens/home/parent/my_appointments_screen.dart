@@ -115,31 +115,37 @@ class _MyAppointmentsScreenState extends State<MyAppointmentsScreen> {
     );
   }
 
-  Widget _buildAppointmentCard(Map<String, dynamic> appointment) {
-    final status = appointment['status'];
+  Widget _buildAppointmentCard(Map<String, dynamic> appointment, String docId) {
+    final status = (appointment['status'] ?? 'pending').toString().toLowerCase();
     Color statusColor;
     IconData statusIcon;
+    String statusDisplay;
 
     switch (status) {
-      case 'CONFIRMED':
+      case 'confirmed':
         statusColor = Colors.green;
         statusIcon = Icons.check_circle;
+        statusDisplay = 'CONFIRMED';
         break;
-      case 'PENDING':
+      case 'pending':
         statusColor = Colors.orange;
         statusIcon = Icons.access_time;
+        statusDisplay = 'PENDING';
         break;
-      case 'COMPLETED':
+      case 'completed':
         statusColor = Colors.blue;
         statusIcon = Icons.check_circle_outline;
+        statusDisplay = 'COMPLETED';
         break;
-      case 'CANCELLED':
+      case 'cancelled':
         statusColor = Colors.red;
         statusIcon = Icons.cancel;
+        statusDisplay = 'CANCELLED';
         break;
       default:
         statusColor = Colors.grey;
         statusIcon = Icons.help_outline;
+        statusDisplay = status.toUpperCase();
     }
 
     return Container(
